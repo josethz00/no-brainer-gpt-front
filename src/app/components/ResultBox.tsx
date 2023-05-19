@@ -4,15 +4,15 @@ interface ResultBoxProps {
 
 function ResultBox({ results }: ResultBoxProps): JSX.Element {
     return (
-      <div className="bg-white rounded-lg p-4">
-        <ul>
-          {results.map((result, index) => (
-            <li key={index}>
-              {result}
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div className="mt-5 w-full">
+            <ul className="space-y-4">
+                {results.map((result, index) => (
+                    <li key={index} className="p-4 border border-gray-200 rounded-md shadow-sm">
+                        {result}
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
   }
   

@@ -2,9 +2,12 @@ import Link from 'next/link';
 
 function Header() {
   return (
-    <header className="p-4 bg-blue-500 text-white">
-      <nav>
-        <ul className="flex justify-around">
+    <header className="w-full flex items-center justify-between p-5 bg-indigo-600">
+      <div className="flex items-center">
+        <div className="font-semibold text-lg text-white">My App</div>
+      </div>
+      <nav className="text-white text-lg">
+        <ul className="flex items-center justify-between space-x-4">
           <li>
             <Link href="/">Home</Link>
           </li>
