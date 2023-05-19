@@ -19,15 +19,29 @@ const Upload = () => {
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Implement the logic of file upload here
     if (file) {
-      setUploadedFiles([
-        ...uploadedFiles,
-        { name: file.name, size: file.size, type: file.type },
-      ]);
-      setFile(null);
+        const data = new FormData()
+        data.append('md_files', file)
+
+        try {
+            console.log('Uploading file...')
+            const result = await fetch('http://localhost:5001/qa/upload-files/form', {
+                method: 'POST',
+                body: data,
+            });
+            if (result.status === 202) {
+                setUploadedFiles([
+                    ...uploadedFiles,
+                    { name: file.name, size: file.size, type: file.type },
+                ]);
+                setFile(null);
+            }
+        } catch(err) {
+            console.error(err);
+            return
+        }
     }
   };
 
