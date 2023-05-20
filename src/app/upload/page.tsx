@@ -1,6 +1,7 @@
 'use client';
 import { FormEvent, ChangeEvent, useState } from 'react';
 import Header from '../components/Header';
+import { ToastContainer, toast } from 'react-toastify';
 
 interface UploadedFile {
   name: string;
@@ -37,6 +38,7 @@ const Upload = () => {
                     { name: file.name, size: file.size, type: file.type },
                 ]);
                 setFile(null);
+                toast('Files received, processing...', { type: 'success' })
             }
         } catch(err) {
             console.error(err);
@@ -47,6 +49,7 @@ const Upload = () => {
 
   return (
     <main>
+        <ToastContainer />
         <Header />
         <div className="w-full h-screen flex flex-col items-center justify-center">
             <form onSubmit={handleSubmit} className="max-w-xl w-full m-4 p-6 bg-white/20 shadow-md rounded-md">
