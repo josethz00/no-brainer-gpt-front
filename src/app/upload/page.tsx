@@ -25,10 +25,10 @@ const Upload = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-/*     if (processing) {
+    if (processing) {
       toast('File upload in progress, please wait...', { type: 'warning' })
       return
-    } */
+    }
 
     if (Array.isArray(files) && files.length > 0) {
       const data = new FormData()
@@ -71,15 +71,22 @@ const Upload = () => {
     if (processing) {
       console.log('Starting SSE...')
       const source = new EventSource("http://localhost:5001/qa/upload-files/stream");
+
       source.onmessage = (event) => {
         console.log(event)
         toast(event.data, { type: 'info' })
+        setProcessing(false);
       };
       source.onerror = (event) => {
         console.error(event);
         toast('Error occurred while processing files', { type: 'error' })
+        setProcessing(false);
       };
-      setProcessing(false);
+
+      return () => {
+        console.log('Closing SSE...')
+        source.close();
+      }
     }
   }, [processing]);
 
