@@ -10,21 +10,24 @@ interface UploadedFile {
 }
 
 const Upload = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
     if (fileList) {
-      setFile(fileList[0]);
+      setFiles(Array.from(fileList));
     }
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (file) {
+    if (Array.isArray(files) && files.length > 0) {
         const data = new FormData()
-        data.append('md_files', file)
+
+        files.forEach((file) => {
+            data.append('md_files', file)
+        });
 
         try {
             console.log('Uploading file...')
@@ -35,9 +38,13 @@ const Upload = () => {
             if (result.status === 202) {
                 setUploadedFiles([
                     ...uploadedFiles,
-                    { name: file.name, size: file.size, type: file.type },
+                    ...files.map((file) => ({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                    })),
                 ]);
-                setFile(null);
+                setFiles([]);
                 toast('Files received, processing...', { type: 'success' })
             }
         } catch(err) {
@@ -63,12 +70,13 @@ const Upload = () => {
             <div className="max-w-xl w-full m-4 p-6 bg-white/20 shadow-md rounded-md overflow-y-auto max-h-64">
                 <h2 className="text-xl mb-4">Uploaded Files:</h2>
                 {uploadedFiles.length ? uploadedFiles.map((file, index) => (
-                <div key={index} className="border-b border-gray-200 py-2">
-                    <p><strong>Name:</strong> {file.name}</p>
-                    <p><strong>Size:</strong> {file.size} bytes</p>
-                    <p><strong>Type:</strong> {file.type}</p>
-                </div>
-                )) : <p>No files uploaded yet.</p>}
+                    <div key={index} className="border-b border-gray-200 py-2">
+                        <p><strong>Name:</strong> {file.name}</p>
+                        <p><strong>Size:</strong> {file.size} bytes</p>
+                        <p><strong>Type:</strong> {file.type}</p>
+                    </div>
+                    )) : <p>No files uploaded yet.</p>
+                }
             </div>
         </div>
     </main>
