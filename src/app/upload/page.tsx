@@ -69,15 +69,23 @@ const Upload = () => {
       return;
     }
     if (processing) {
+      let processingDone = false;
       console.log('Starting SSE...')
       const source = new EventSource("http://localhost:5001/qa/upload-files/stream");
 
       source.onmessage = (event) => {
         console.log(event)
         toast(event.data, { type: 'info' })
-        setProcessing(false);
+        if (event.data === 'Finished processing all files.') {
+          setProcessing(false);
+          processingDone = true;
+        }
       };
       source.onerror = (event) => {
+        if (processingDone) {
+          console.log('Stream closed after processing');
+          return;
+        }
         console.error(event);
         toast('Error occurred while processing files', { type: 'error' })
         setProcessing(false);
@@ -89,6 +97,7 @@ const Upload = () => {
       }
     }
   }, [processing]);
+
 
   return (
     <main>
