@@ -12,6 +12,7 @@ interface UploadedFile {
 const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [processing, setProcessing] = useState(false);
   const isFirstRender = useRef(true);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +24,12 @@ const Upload = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+/*     if (processing) {
+      toast('File upload in progress, please wait...', { type: 'warning' })
+      return
+    } */
+
     if (Array.isArray(files) && files.length > 0) {
       const data = new FormData()
 
@@ -47,6 +54,7 @@ const Upload = () => {
           ]);
           setFiles([]);
           toast('Files received, processing...', { type: 'success' })
+          setProcessing(true);
         }
       } catch(err) {
           console.error(err);
@@ -60,7 +68,20 @@ const Upload = () => {
       isFirstRender.current = false;
       return;
     }
-  }, [uploadedFiles]);
+    if (processing) {
+      console.log('Starting SSE...')
+      const source = new EventSource("http://localhost:5001/qa/upload-files/stream");
+      source.onmessage = (event) => {
+        console.log(event)
+        toast(event.data, { type: 'info' })
+      };
+      source.onerror = (event) => {
+        console.error(event);
+        toast('Error occurred while processing files', { type: 'error' })
+      };
+      setProcessing(false);
+    }
+  }, [processing]);
 
   return (
     <main>
