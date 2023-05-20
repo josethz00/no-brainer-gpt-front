@@ -73,6 +73,8 @@ const Upload = () => {
       console.log('Starting SSE...')
       const source = new EventSource("http://localhost:5001/qa/upload-files/stream");
 
+      console.log('useEffect called, processing:', processing);
+
       source.onmessage = (event) => {
         console.log(event)
         toast(event.data, { type: 'info' })
@@ -97,7 +99,6 @@ const Upload = () => {
       }
     }
   }, [processing]);
-
 
   return (
     <main>
