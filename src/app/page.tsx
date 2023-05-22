@@ -6,8 +6,10 @@ import ResultBox from './components/ResultBox';
 
 function Home() {
   const [results, setResults] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSearch = async (searchTerm: string) => {
+    setIsLoading(true);
     const queryResults = await fetch('http://localhost:5001/qa/answer', {
       method: 'POST',
       body: JSON.stringify({ question: searchTerm }),
@@ -17,6 +19,7 @@ function Home() {
     console.log(queryResults);
 
     setResults([queryResults.answer]);
+    setIsLoading(false);
   };
 
   return (
